@@ -1,8 +1,8 @@
 
-AVRASM ver. 2.2.8  C:\Users\ESLab_NetLab-Student\Documents\Atmel Studio\7.0\distance-sensor_assembler-project\distance-sensor\main.asm Fri May 23 15:47:12 2025
+AVRASM ver. 2.2.8  C:\Users\Benedikt\workspace\distance-sensor_assembler-project\distance-sensor\main.asm Wed Jun 04 13:04:10 2025
 
-[builtin](2): Including file 'C:/Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.6.364\avrasm\inc\m328Pdef.inc'
-[builtin](2): Including file 'C:/Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.6.364\avrasm\inc\m328Pdef.inc'
+[builtin](2): Including file 'D:/Programme\7.0\Packs\atmel\ATmega_DFP\1.6.364\avrasm\inc\m328Pdef.inc'
+[builtin](2): Including file 'D:/Programme\7.0\Packs\atmel\ATmega_DFP\1.6.364\avrasm\inc\m328Pdef.inc'
                                  
                                  ;
                                  
@@ -991,50 +991,84 @@ AVRASM ver. 2.2.8  C:\Users\ESLab_NetLab-Student\Documents\Atmel Studio\7.0\dist
                                  ; Author : ESLab_NetLab-Student
                                  ;
                                  
-                                 .equ trigPin = 2
-                                 .equ inputPin = 3
-                                 
-000000 9a52                      	sbi DDRD , trigPin
-                                 
-                                 start :
-000001 984a                      	cbi	PIND, trigPin
-000002 d00d                      	rcall Delay_2microsec
-000003 9a4a                      	sbi PIND , trigPin 
-000004 d003                      	rcall Delay_10microsec
-000005 984a                      	cbi PIND, trigPin
-000006 e041                      	LDI r20 , 1
-                                 	
-                                 
-000007 cff9                      	rjmp start
                                  
                                  
-                                 Delay_10microsec:                
-                                 Delay1_10:
-000008 e00a                          LDI     r16,   10     ; One clock cycle
-                                 Delay2_10:
-000009 e014                          LDI     r17,   4     ; One clock cycle
-                                 Delay3_10:
-00000a 951a                          DEC     r17            ; One clock cycle
-00000b 0000                          NOP                     ; One clock cycle
-00000c f7e9                          BRNE    Delay3_10          ; Two clock cycles when jumping to Delay3, 1 clock when continuing to DEC
                                  
-00000d 950a                          DEC     r16            ; One clock cycle
-00000e f7d1                          BRNE    Delay2_10          ; Two clock cycles when jumping to Delay2, 1 clock when continuing to DEC
-00000f 9508                      RET 
+                                 .equ trigPin= 2
+                                 .equ echoPin= 3
+                                 
+000000 9a52                          sbi DDRD, trigPin      ; TRIG = output
+000001 9853                          cbi DDRD, echoPin  
+                                 
+                                 start:
+000002 985a                      	cbi PORTD, trigPin
+000003 d024                          rcall Delay_2microsec
+000004 9a5a                          sbi PORTD, trigPin
+000005 d015                          rcall Delay_10microsec
+000006 985a                          cbi PORTD, trigPin
+                                     
+                                 
+                                    
+                                 wait_echo_high:
+000007 9b4b                          sbis PIND, echoPin    
+000008 cffe                          rjmp wait_echo_high
+                                 
+                                     
+000009 e000                          ldi r16, 0
+00000a 9300 0085                     sts TCNT1H, r16
+00000c 9300 0084                     sts TCNT1L, r16
+                                 
+                                     
+00000e e001                          ldi r16, (1 << 0)      
+00000f 9300 0081                     sts TCCR1B, r16
+                                 
+                                 
+                                 wait_echo_low:
+000011 994b                          sbic PIND, echoPin     
+000012 cffe                          rjmp wait_echo_low
+                                 
+000013 e000                          ldi r16, 0
+000014 9300 0081                     sts TCCR1B, r16
+                                 
+000016 9120 0084                     lds r18, TCNT1L 
+000018 9130 0085                     lds r19, TCNT1H
+                                 
+                                 
+00001a cfe7                          rjmp start
+                                 
+                                 
+                                 Delay_10microsec:
+00001b e028                          ldi r18, 8
+                                 OuterLoop:
+00001c e034                          ldi r19, 4
+                                 InnerLoop:
+00001d 953a                          dec r19
+00001e 0000                          nop
+00001f f7e9                          brne InnerLoop
+                                 
+000020 952a                          dec r18
+000021 f7d1                          brne OuterLoop
+                                 
+000022 0000                          nop
+000023 0000                          nop
+000024 0000                          nop
+000025 0000                          nop
+000026 0000                          nop
+000027 9508                      RET
                                  	
                                  
                                  Delay_2microsec:                
                                  Delay1_2:
-000010 e022                          LDI     r18,   2     ; One clock cycle
+000028 e022                          LDI     r18,   2     ; One clock cycle
                                  Delay2:
-000011 e034                          LDI     r19,   4     ; One clock cycle
+000029 e034                          LDI     r19,   4     ; One clock cycle
                                  Delay3:
-000012 953a                          DEC     r19            ; One clock cycle
-000013 0000                          NOP                     ; One clock cycle
-000014 f7e9                          BRNE    Delay3          ; Two clock cycles when jumping to Delay3, 1 clock when continuing to DEC
+00002a 953a                          DEC     r19            ; One clock cycle
+00002b 0000                          NOP                     ; One clock cycle
+00002c f7e9                          BRNE    Delay3          ; Two clock cycles when jumping to Delay3, 1 clock when continuing to DEC
                                  
-000015 952a                          DEC     r18            ; One clock cycle
-000016 f7d1                          BRNE    Delay2          ; Two clock cycles when jumping to Delay2, 1 clock when continuing to DEC
+00002d 952a                          DEC     r18            ; One clock cycle
+00002e f7d1                          BRNE    Delay2          ; Two clock cycles when jumping to Delay2, 1 clock when continuing to DEC
 
 
 RESOURCE USE INFORMATION
@@ -1054,10 +1088,10 @@ counted separately from r26..r31 here.
 "ATmega328P" register use summary:
 x  :   0 y  :   0 z  :   0 r0 :   0 r1 :   0 r2 :   0 r3 :   0 r4 :   0 
 r5 :   0 r6 :   0 r7 :   0 r8 :   0 r9 :   0 r10:   0 r11:   0 r12:   0 
-r13:   0 r14:   0 r15:   0 r16:   2 r17:   2 r18:   2 r19:   2 r20:   1 
+r13:   0 r14:   0 r15:   0 r16:   7 r17:   0 r18:   5 r19:   5 r20:   0 
 r21:   0 r22:   0 r23:   0 r24:   0 r25:   0 r26:   0 r27:   0 r28:   0 
 r29:   0 r30:   0 r31:   0 
-Registers used: 5 out of 35 (14.3%)
+Registers used: 3 out of 35 (8.6%)
 
 "ATmega328P" instruction use summary:
 .lds  :   0 .sts  :   0 adc   :   0 add   :   0 adiw  :   0 and   :   0 
@@ -1065,26 +1099,26 @@ andi  :   0 asr   :   0 bclr  :   0 bld   :   0 brbc  :   0 brbs  :   0
 brcc  :   0 brcs  :   0 break :   0 breq  :   0 brge  :   0 brhc  :   0 
 brhs  :   0 brid  :   0 brie  :   0 brlo  :   0 brlt  :   0 brmi  :   0 
 brne  :   4 brpl  :   0 brsh  :   0 brtc  :   0 brts  :   0 brvc  :   0 
-brvs  :   0 bset  :   0 bst   :   0 call  :   0 cbi   :   2 cbr   :   0 
+brvs  :   0 bset  :   0 bst   :   0 call  :   0 cbi   :   3 cbr   :   0 
 clc   :   0 clh   :   0 cli   :   0 cln   :   0 clr   :   0 cls   :   0 
 clt   :   0 clv   :   0 clz   :   0 com   :   0 cp    :   0 cpc   :   0 
 cpi   :   0 cpse  :   0 dec   :   4 eor   :   0 fmul  :   0 fmuls :   0 
 fmulsu:   0 icall :   0 ijmp  :   0 in    :   0 inc   :   0 jmp   :   0 
-ld    :   0 ldd   :   0 ldi   :   5 lds   :   0 lpm   :   0 lsl   :   0 
+ld    :   0 ldd   :   0 ldi   :   7 lds   :   2 lpm   :   0 lsl   :   0 
 lsr   :   0 mov   :   0 movw  :   0 mul   :   0 muls  :   0 mulsu :   0 
-neg   :   0 nop   :   2 or    :   0 ori   :   0 out   :   0 pop   :   0 
-push  :   0 rcall :   2 ret   :   2 reti  :   0 rjmp  :   1 rol   :   0 
-ror   :   0 sbc   :   0 sbci  :   0 sbi   :   2 sbic  :   0 sbis  :   0 
+neg   :   0 nop   :   7 or    :   0 ori   :   0 out   :   0 pop   :   0 
+push  :   0 rcall :   2 ret   :   2 reti  :   0 rjmp  :   3 rol   :   0 
+ror   :   0 sbc   :   0 sbci  :   0 sbi   :   2 sbic  :   1 sbis  :   1 
 sbiw  :   0 sbr   :   0 sbrc  :   0 sbrs  :   0 sec   :   0 seh   :   0 
 sei   :   0 sen   :   0 ser   :   0 ses   :   0 set   :   0 sev   :   0 
-sez   :   0 sleep :   0 spm   :   0 st    :   0 std   :   0 sts   :   0 
+sez   :   0 sleep :   0 spm   :   0 st    :   0 std   :   0 sts   :   4 
 sub   :   0 subi  :   0 swap  :   0 tst   :   0 wdr   :   0 
-Instructions used: 9 out of 113 (8.0%)
+Instructions used: 13 out of 113 (11.5%)
 
 "ATmega328P" memory use summary [bytes]:
 Segment   Begin    End      Code   Data   Used    Size   Use%
 ---------------------------------------------------------------
-[.cseg] 0x000000 0x000030     48      0     48   32768   0.1%
+[.cseg] 0x000000 0x000060     96      0     96   32768   0.3%
 [.dseg] 0x000100 0x000100      0      0      0    2048   0.0%
 [.eseg] 0x000000 0x000000      0      0      0    1024   0.0%
 

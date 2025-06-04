@@ -1,18 +1,18 @@
 <ASSEMBLER_INFO>
  <VERSION>2.2.8</VERSION>
  <DEVICE>"ATmega328P"</DEVICE>
- <WORKING_DIR>C:\Users\ESLab_NetLab-Student\Documents\Atmel Studio\7.0\distance-sensor_assembler-project\distance-sensor\Debug</WORKING_DIR>
+ <WORKING_DIR>C:\Users\Benedikt\workspace\distance-sensor_assembler-project\distance-sensor\Debug</WORKING_DIR>
  <INCLUDE_PATH>
-  <DIR>C:/Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.6.364\avrasm\inc</DIR>
-  <DIR>C:\Program Files (x86)\Atmel\Studio\7.0\toolchain\avr8\avrassembler\Include</DIR>
+  <DIR>D:/Programme\7.0\Packs\atmel\ATmega_DFP\1.6.364\avrasm\inc</DIR>
+  <DIR>D:\Programme\7.0\toolchain\avr8\avrassembler\Include</DIR>
   <DIR></DIR>
  </INCLUDE_PATH>
- <SOURCE_FILE>C:\Users\ESLab_NetLab-Student\Documents\Atmel Studio\7.0\distance-sensor_assembler-project\distance-sensor\main.asm</SOURCE_FILE>
+ <SOURCE_FILE>C:\Users\Benedikt\workspace\distance-sensor_assembler-project\distance-sensor\main.asm</SOURCE_FILE>
  <INCLUDED_FILES>
-  <FILE>C:/Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.6.364\avrasm\inc\m328Pdef.inc</FILE>
+  <FILE>D:/Programme\7.0\Packs\atmel\ATmega_DFP\1.6.364\avrasm\inc\m328Pdef.inc</FILE>
  </INCLUDED_FILES>
  <OBJECT_FILES>
-  <FILE>C:\Users\ESLab_NetLab-Student\Documents\Atmel Studio\7.0\distance-sensor_assembler-project\distance-sensor\Debug\distance-sensor.obj</FILE>
+  <FILE>C:\Users\Benedikt\workspace\distance-sensor_assembler-project\distance-sensor\Debug\distance-sensor.obj</FILE>
  </OBJECT_FILES>
  <HEX_FILES>
   <FILE>distance-sensor.hex</FILE>
@@ -22,14 +22,15 @@
   <FILE>distance-sensor.lss</FILE>
  </OUTPUT_FILES>
  <LABELS>
-  <start><FILE>C:\Users\ESLab_NetLab-Student\Documents\Atmel Studio\7.0\distance-sensor_assembler-project\distance-sensor\main.asm</FILE><LINE>13</LINE></start>
-  <Delay_2microsec><FILE>C:\Users\ESLab_NetLab-Student\Documents\Atmel Studio\7.0\distance-sensor_assembler-project\distance-sensor\main.asm</FILE><LINE>40</LINE></Delay_2microsec>
-  <Delay_10microsec><FILE>C:\Users\ESLab_NetLab-Student\Documents\Atmel Studio\7.0\distance-sensor_assembler-project\distance-sensor\main.asm</FILE><LINE>25</LINE></Delay_10microsec>
-  <Delay1_10><FILE>C:\Users\ESLab_NetLab-Student\Documents\Atmel Studio\7.0\distance-sensor_assembler-project\distance-sensor\main.asm</FILE><LINE>26</LINE></Delay1_10>
-  <Delay2_10><FILE>C:\Users\ESLab_NetLab-Student\Documents\Atmel Studio\7.0\distance-sensor_assembler-project\distance-sensor\main.asm</FILE><LINE>28</LINE></Delay2_10>
-  <Delay3_10><FILE>C:\Users\ESLab_NetLab-Student\Documents\Atmel Studio\7.0\distance-sensor_assembler-project\distance-sensor\main.asm</FILE><LINE>30</LINE></Delay3_10>
-  <Delay1_2><FILE>C:\Users\ESLab_NetLab-Student\Documents\Atmel Studio\7.0\distance-sensor_assembler-project\distance-sensor\main.asm</FILE><LINE>41</LINE></Delay1_2>
-  <Delay2><FILE>C:\Users\ESLab_NetLab-Student\Documents\Atmel Studio\7.0\distance-sensor_assembler-project\distance-sensor\main.asm</FILE><LINE>43</LINE></Delay2>
-  <Delay3><FILE>C:\Users\ESLab_NetLab-Student\Documents\Atmel Studio\7.0\distance-sensor_assembler-project\distance-sensor\main.asm</FILE><LINE>45</LINE></Delay3>
+  <start><FILE>C:\Users\Benedikt\workspace\distance-sensor_assembler-project\distance-sensor\main.asm</FILE><LINE>17</LINE></start>
+  <Delay_2microsec><FILE>C:\Users\Benedikt\workspace\distance-sensor_assembler-project\distance-sensor\main.asm</FILE><LINE>74</LINE></Delay_2microsec>
+  <Delay_10microsec><FILE>C:\Users\Benedikt\workspace\distance-sensor_assembler-project\distance-sensor\main.asm</FILE><LINE>54</LINE></Delay_10microsec>
+  <wait_echo_high><FILE>C:\Users\Benedikt\workspace\distance-sensor_assembler-project\distance-sensor\main.asm</FILE><LINE>26</LINE></wait_echo_high>
+  <wait_echo_low><FILE>C:\Users\Benedikt\workspace\distance-sensor_assembler-project\distance-sensor\main.asm</FILE><LINE>40</LINE></wait_echo_low>
+  <OuterLoop><FILE>C:\Users\Benedikt\workspace\distance-sensor_assembler-project\distance-sensor\main.asm</FILE><LINE>56</LINE></OuterLoop>
+  <InnerLoop><FILE>C:\Users\Benedikt\workspace\distance-sensor_assembler-project\distance-sensor\main.asm</FILE><LINE>58</LINE></InnerLoop>
+  <Delay1_2><FILE>C:\Users\Benedikt\workspace\distance-sensor_assembler-project\distance-sensor\main.asm</FILE><LINE>75</LINE></Delay1_2>
+  <Delay2><FILE>C:\Users\Benedikt\workspace\distance-sensor_assembler-project\distance-sensor\main.asm</FILE><LINE>77</LINE></Delay2>
+  <Delay3><FILE>C:\Users\Benedikt\workspace\distance-sensor_assembler-project\distance-sensor\main.asm</FILE><LINE>79</LINE></Delay3>
  </LABELS>
 </ASSEMBLER_INFO>
