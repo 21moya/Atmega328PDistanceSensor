@@ -1,5 +1,5 @@
 
-AVRASM ver. 2.2.8  C:\Users\Benedikt\workspace\distance-sensor_assembler-project\distance-sensor\main.asm Wed Jun 04 13:04:10 2025
+AVRASM ver. 2.2.8  C:\Users\Benedikt\workspace\distance-sensor_assembler-project\distance-sensor\main.asm Sat Jun 07 16:33:24 2025
 
 
 EQU  SIGNATURE_000 0000001e
@@ -695,15 +695,29 @@ EQU  ACIaddr      0000002e
 EQU  TWIaddr      00000030
 EQU  SPMRaddr     00000032
 EQU  INT_VECTORS_SIZE 00000034
-EQU  trigPin      00000002
-EQU  echoPin      00000003
-CSEG start        00000002
-CSEG Delay_2microsec 00000028
-CSEG Delay_10microsec 0000001b
-CSEG wait_echo_high 00000007
-CSEG wait_echo_low 00000011
-CSEG OuterLoop    0000001c
-CSEG InnerLoop    0000001d
-CSEG Delay1_2     00000028
-CSEG Delay2       00000029
-CSEG Delay3       0000002a
+EQU  exec_delay   00000028
+EQU  button       00000002
+EQU  sensor       00000003
+EQU  light        00000004
+EQU  measure_delay_time 000217b7
+DEF  cnt          r17
+DEF  cnt_low      r18
+DEF  cnt_mid      r19
+DEF  cnt_high     r20
+DEF  drem16uL     r24
+DEF  drem16uH     r25
+DEF  dd16uL       r22
+DEF  dd16uH       r23
+DEF  dv16uL       r28
+DEF  dv16uH       r29
+DEF  dcnt16u      r30
+CSEG start        00000005
+CSEG measure      00000008
+CSEG short_delay  0000002e
+CSEG await_signal 00000010
+CSEG indicate_activity 0000001d
+CSEG long_delay   00000032
+CSEG div16u       0000003d
+CSEG d16u_1       00000040
+CSEG d16u_2       00000045
+CSEG d16u_3       0000004e

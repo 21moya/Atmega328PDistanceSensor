@@ -1,81 +1,122 @@
-;
-; distance-sensor.asm
-;
-; Created: 23.05.2025 14:19:23
-; Author : ESLab_NetLab-Student
-;
+.equ exec_delay = 40
+;.equ delay_2mikrosec = 8
+.equ button = 2
+.equ sensor = 3
+.equ light = 4
+.equ measure_delay_time = 137143
+
+
+.def cnt = r17
+.def cnt_low = r18
+.def cnt_mid = r19
+.def cnt_high = r20
+
+
+.def	drem16uL=r24
+.def	drem16uH=r25
+.def	dd16uL	=r22
+.def	dd16uH	=r23
+.def	dv16uL	=r28
+.def	dv16uH	=r29
+.def	dcnt16u	=r30
 
 
 
 
-.equ trigPin= 2
-.equ echoPin= 3
+cbi DDRD, sensor
 
-    sbi DDRD, trigPin      ; TRIG = output
-    cbi DDRD, echoPin  
+sbi DDRD, light
+cbi PORTD, light
+
+ldi dv16uL, 116
+ldi dv16uH, 0
 
 start:
-	cbi PORTD, trigPin
-    rcall Delay_2microsec
-    sbi PORTD, trigPin
-    rcall Delay_10microsec
-    cbi PORTD, trigPin
-    
+	sbic PIND, button
+	rcall measure 
+	rjmp start
 
-   
-wait_echo_high:
-    sbis PIND, echoPin    
-    rjmp wait_echo_high
+measure:
+	ldi cnt, exec_delay
+	sbi DDRD, sensor
+	sbi PORTD, sensor
+	rcall short_delay
+	cbi PORTD, sensor
+	cbi DDRD, sensor
+	rcall await_signal
+	ret
 
-    
-    ldi r16, 0
-    sts TCNT1H, r16
-    sts TCNT1L, r16
+await_signal:
+	sbis PIND, sensor
+	rjmp await_signal
 
-    
-    ldi r16, (1 << 0)      
-    sts TCCR1B, r16
+	ldi r16,0
+	sts TCNT1H, r16
+	sts TCNT1L, r16
+	ldi r16, (1 << 0)
+	sts TCCR1B, r16 
 
+	rcall indicate_activity
+ 	cbi PORTD, light
+	ret
 
-wait_echo_low:
-    sbic PIND, echoPin     
-    rjmp wait_echo_low
-
-    ldi r16, 0
-    sts TCCR1B, r16
-
-    lds r18, TCNT1L 
-    lds r19, TCNT1H
-
-
-    rjmp start
-
-
-Delay_10microsec:                
-Delay1_10:
-    LDI     r16,   10     ; One clock cycle
-Delay2_10:
-    LDI     r17,   6     ; One clock cycle
-Delay3_10:
-    DEC     r17            ; One clock cycle
-    NOP                     ; One clock cycle
-    BRNE    Delay3_10          ; Two clock cycles when jumping to Delay3, 1 clock when continuing to DEC
-
-    DEC     r16            ; One clock cycle
-    BRNE    Delay2_10          ; Two clock cycles when jumping to Delay2, 1 clock when continuing to DEC
-RET 
+indicate_activity:
+	sbic PIND, sensor
+	rjmp indicate_activity
 	
+	ldi r16,0
+	sts TCCR1B, r16
 
-Delay_2microsec:                
-Delay1_2:
-    LDI     r18,   2     ; One clock cycle
-Delay2:
-    LDI     r19,   4     ; One clock cycle
-Delay3:
-    DEC     r19            ; One clock cycle
-    NOP                     ; One clock cycle
-    BRNE    Delay3          ; Two clock cycles when jumping to Delay3, 1 clock when continuing to DEC
+	lds r22, TCNT1L
+	lds r23, TCNT1H
 
-    DEC     r18            ; One clock cycle
-    BRNE    Delay2          ; Two clock cycles when jumping to Delay2, 1 clock when continuing to DEC
-RET 
+	sbi PORTD, light
+
+	ldi cnt_low , byte1 ( measure_delay_time )
+	ldi cnt_mid , byte2 ( measure_delay_time )
+	ldi cnt_high , byte3 ( measure_delay_time )
+	rcall long_delay
+	rcall div16u
+	nop
+	ret
+
+short_delay:
+	dec cnt
+	tst cnt
+	brne short_delay
+	ret
+
+long_delay :
+	clc
+	sbci cnt_low ,1
+	sbci cnt_mid ,0
+	sbci cnt_high ,0
+	tst cnt_high
+	brne long_delay 
+	tst cnt_mid
+	brne long_delay
+	tst cnt_low
+	brne long_delay
+	ret
+
+
+
+div16u:	clr	drem16uL		;clear remainder Low byte
+	sub	drem16uH,drem16uH	;clear remainder High byte and carry
+	ldi	dcnt16u,17		;init loop counter
+d16u_1:	rol	dd16uL			;shift left dividend
+	rol	dd16uH
+	dec	dcnt16u			;decrement counter
+	brne	d16u_2			;if done
+	ret				;    return
+d16u_2:	rol	drem16uL		;shift dividend into remainder
+	rol	drem16uH
+	sub	drem16uL,dv16uL		;remainder = remainder - divisor
+	sbc	drem16uH,dv16uH		;
+	brcc	d16u_3			;if result negative
+	add	drem16uL,dv16uL		;    restore remainder
+	adc	drem16uH,dv16uH
+	clc				;    clear carry to be shifted into result
+	rjmp	d16u_1			;else
+d16u_3:	sec				;    set carry to be shifted into result
+	rjmp	d16u_1
