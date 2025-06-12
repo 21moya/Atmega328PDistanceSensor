@@ -22,15 +22,13 @@
   <FILE>distance-sensor.lss</FILE>
  </OUTPUT_FILES>
  <LABELS>
-  <start><FILE>C:\Users\Benedikt\workspace\distance-sensor_assembler-project\distance-sensor\main.asm</FILE><LINE>35</LINE></start>
-  <measure><FILE>C:\Users\Benedikt\workspace\distance-sensor_assembler-project\distance-sensor\main.asm</FILE><LINE>40</LINE></measure>
-  <short_delay><FILE>C:\Users\Benedikt\workspace\distance-sensor_assembler-project\distance-sensor\main.asm</FILE><LINE>84</LINE></short_delay>
-  <await_signal><FILE>C:\Users\Benedikt\workspace\distance-sensor_assembler-project\distance-sensor\main.asm</FILE><LINE>50</LINE></await_signal>
-  <indicate_activity><FILE>C:\Users\Benedikt\workspace\distance-sensor_assembler-project\distance-sensor\main.asm</FILE><LINE>64</LINE></indicate_activity>
-  <long_delay><FILE>C:\Users\Benedikt\workspace\distance-sensor_assembler-project\distance-sensor\main.asm</FILE><LINE>90</LINE></long_delay>
-  <div16u><FILE>C:\Users\Benedikt\workspace\distance-sensor_assembler-project\distance-sensor\main.asm</FILE><LINE>105</LINE></div16u>
-  <d16u_1><FILE>C:\Users\Benedikt\workspace\distance-sensor_assembler-project\distance-sensor\main.asm</FILE><LINE>108</LINE></d16u_1>
-  <d16u_2><FILE>C:\Users\Benedikt\workspace\distance-sensor_assembler-project\distance-sensor\main.asm</FILE><LINE>113</LINE></d16u_2>
-  <d16u_3><FILE>C:\Users\Benedikt\workspace\distance-sensor_assembler-project\distance-sensor\main.asm</FILE><LINE>122</LINE></d16u_3>
+  <start><FILE>C:\Users\Benedikt\workspace\distance-sensor_assembler-project\distance-sensor\main.asm</FILE><LINE>27</LINE></start>
+  <measure><FILE>C:\Users\Benedikt\workspace\distance-sensor_assembler-project\distance-sensor\main.asm</FILE><LINE>32</LINE></measure>
+  <short_delay><FILE>C:\Users\Benedikt\workspace\distance-sensor_assembler-project\distance-sensor\main.asm</FILE><LINE>72</LINE></short_delay>
+  <await_signal><FILE>C:\Users\Benedikt\workspace\distance-sensor_assembler-project\distance-sensor\main.asm</FILE><LINE>42</LINE></await_signal>
+  <indicate_activity><FILE>C:\Users\Benedikt\workspace\distance-sensor_assembler-project\distance-sensor\main.asm</FILE><LINE>56</LINE></indicate_activity>
+  <D16_nnn><FILE>C:\Users\Benedikt\workspace\distance-sensor_assembler-project\distance-sensor\main.asm</FILE><LINE>93</LINE></D16_nnn>
+  <long_delay><FILE>C:\Users\Benedikt\workspace\distance-sensor_assembler-project\distance-sensor\main.asm</FILE><LINE>78</LINE></long_delay>
+  <DIV_ret><FILE>C:\Users\Benedikt\workspace\distance-sensor_assembler-project\distance-sensor\main.asm</FILE><LINE>156</LINE></DIV_ret>
  </LABELS>
 </ASSEMBLER_INFO>

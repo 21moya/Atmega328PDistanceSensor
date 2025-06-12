@@ -1,10 +1,7 @@
 
-AVRASM ver. 2.2.8  C:\Users\Benedikt\workspace\distance-sensor_assembler-project\distance-sensor\main.asm Sat Jun 07 16:33:24 2025
+AVRASM ver. 2.2.8  C:\Users\Benedikt\workspace\distance-sensor_assembler-project\distance-sensor\main.asm Thu Jun 12 21:08:33 2025
 
 [builtin](2): Including file 'D:/Programme\7.0\Packs\atmel\ATmega_DFP\1.6.364\avrasm\inc\m328Pdef.inc'
-C:\Users\Benedikt\workspace\distance-sensor_assembler-project\distance-sensor\main.asm(20): warning: Register r28 already defined by the .DEF directive
-C:\Users\Benedikt\workspace\distance-sensor_assembler-project\distance-sensor\main.asm(21): warning: Register r29 already defined by the .DEF directive
-C:\Users\Benedikt\workspace\distance-sensor_assembler-project\distance-sensor\main.asm(22): warning: Register r30 already defined by the .DEF directive
 [builtin](2): Including file 'D:/Programme\7.0\Packs\atmel\ATmega_DFP\1.6.364\avrasm\inc\m328Pdef.inc'
                                  
                                  .equ exec_delay = 40
@@ -994,21 +991,15 @@ C:\Users\Benedikt\workspace\distance-sensor_assembler-project\distance-sensor\ma
                                  .equ light = 4
                                  .equ measure_delay_time = 137143
                                  
+                                 .set reg_N = 116                  ; {N}
+                                 .set reg_Kd=(2*256*256/reg_N+1)/2 ; {Kd}
+                                 .set reg_Kr=(1-reg_N)/2           ; {Kr}
+                                  
                                  
-                                 .def cnt = r17
-                                 .def cnt_low = r18
-                                 .def cnt_mid = r19
-                                 .def cnt_high = r20
-                                 
-                                 
-                                 .def	drem16uL=r24
-                                 .def	drem16uH=r25
-                                 
-                                 .def	dd16uL	=r22
-                                 .def	dd16uH	=r23
-                                 .def	dv16uL	=r28
-                                 .def	dv16uH	=r29
-                                 .def	dcnt16u	=r30
+                                 .def cnt = r22
+                                 .def cnt_low = r23
+                                 .def cnt_mid = r24
+                                 .def cnt_high = r25
                                  
                                  
                                  
@@ -1018,98 +1009,137 @@ C:\Users\Benedikt\workspace\distance-sensor_assembler-project\distance-sensor\ma
 000001 9a54                      sbi DDRD, light
 000002 985c                      cbi PORTD, light
                                  
-000003 e7c4                      ldi dv16uL, 116
-000004 e0d0                      ldi dv16uH, 0
                                  
                                  start:
-000005 994a                      	sbic PIND, button
-000006 d001                      	rcall measure 
-000007 cffd                      	rjmp start
+000003 994a                      	sbic PIND, button
+000004 d001                      	rcall measure 
+000005 cffd                      	rjmp start
                                  
                                  measure:
-000008 e218                      	ldi cnt, exec_delay
-000009 9a53                      	sbi DDRD, sensor
-00000a 9a5b                      	sbi PORTD, sensor
-00000b d022                      	rcall short_delay
-00000c 985b                      	cbi PORTD, sensor
-00000d 9853                      	cbi DDRD, sensor
-00000e d001                      	rcall await_signal
-00000f 9508                      	ret
+000006 e268                      	ldi cnt, exec_delay
+000007 9a53                      	sbi DDRD, sensor
+000008 9a5b                      	sbi PORTD, sensor
+000009 d01e                      	rcall short_delay
+00000a 985b                      	cbi PORTD, sensor
+00000b 9853                      	cbi DDRD, sensor
+00000c d001                      	rcall await_signal
+00000d 9508                      	ret
                                  
                                  await_signal:
-000010 9b4b                      	sbis PIND, sensor
-000011 cffe                      	rjmp await_signal
+00000e 9b4b                      	sbis PIND, sensor
+00000f cffe                      	rjmp await_signal
                                  
-000012 e000                      	ldi r16,0
-000013 9300 0085                 	sts TCNT1H, r16
-000015 9300 0084                 	sts TCNT1L, r16
-000017 e001                      	ldi r16, (1 << 0)
-000018 9300 0081                 	sts TCCR1B, r16 
+000010 e0a0                      	ldi r26,0
+000011 93a0 0085                 	sts TCNT1H, r26
+000013 93a0 0084                 	sts TCNT1L, r26
+000015 e0a2                      	ldi r26, (1 << 1)
+000016 93a0 0081                 	sts TCCR1B, r26 
                                  
-00001a d002                      	rcall indicate_activity
-00001b 985c                       	cbi PORTD, light
-00001c 9508                      	ret
+000018 d002                      	rcall indicate_activity
+000019 985c                       	cbi PORTD, light
+00001a 9508                      	ret
                                  
                                  indicate_activity:
-00001d 994b                      	sbic PIND, sensor
-00001e cffe                      	rjmp indicate_activity
+00001b 994b                      	sbic PIND, sensor
+00001c cffe                      	rjmp indicate_activity
                                  	
-00001f e000                      	ldi r16,0
-000020 9300 0081                 	sts TCCR1B, r16
+00001d e0a0                      	ldi r26,0
+00001e 93a0 0081                 	sts TCCR1B, r26
                                  
-000022 9160 0084                 	lds r22, TCNT1L
-000024 9170 0085                 	lds r23, TCNT1H
+000020 9100 0084                 	lds r16, TCNT1L
+000022 9110 0085                 	lds r17, TCNT1H
                                  
-000026 9a5c                      	sbi PORTD, light
+000024 9a5c                      	sbi PORTD, light
+000025 d011                      	rcall D16_nnn
+000026 0000                      	nop
+000027 9508                      	ret
                                  
-000027 eb27                      	ldi cnt_low , byte1 ( measure_delay_time )
-000028 e137                      	ldi cnt_mid , byte2 ( measure_delay_time )
-000029 e042                      	ldi cnt_high , byte3 ( measure_delay_time )
-00002a d007                      	rcall long_delay
-00002b d011                      	rcall div16u
-00002c 0000                      	nop
-00002d 9508                      	ret
                                  
                                  short_delay:
-00002e 951a                      	dec cnt
-00002f 2311                      	tst cnt
-000030 f7e9                      	brne short_delay
-000031 9508                      	ret
+000028 956a                      	dec cnt
+000029 2366                      	tst cnt
+00002a f7e9                      	brne short_delay
+00002b 9508                      	ret
                                  
                                  long_delay :
-000032 9488                      	clc
-000033 4021                      	sbci cnt_low ,1
-000034 4030                      	sbci cnt_mid ,0
-000035 4040                      	sbci cnt_high ,0
-000036 2344                      	tst cnt_high
-000037 f7d1                      	brne long_delay 
-000038 2333                      	tst cnt_mid
-000039 f7c1                      	brne long_delay
-00003a 2322                      	tst cnt_low
-00003b f7b1                      	brne long_delay
-00003c 9508                      	ret
+00002c 9488                      	clc
+00002d 4071                      	sbci cnt_low ,1
+00002e 4080                      	sbci cnt_mid ,0
+00002f 4090                      	sbci cnt_high ,0
+000030 2399                      	tst cnt_high
+000031 f7d1                      	brne long_delay 
+000032 2388                      	tst cnt_mid
+000033 f7c1                      	brne long_delay
+000034 2377                      	tst cnt_low
+000035 f7b1                      	brne long_delay
+000036 9508                      	ret
                                  
                                  
                                  
-00003d 2788                      div16u:	clr	drem16uL		;clear remainder Low byte
-00003e 1b99                      	sub	drem16uH,drem16uH	;clear remainder High byte and carry
-00003f e1e1                      	ldi	dcnt16u,17		;init loop counter
-000040 1f66                      d16u_1:	rol	dd16uL			;shift left dividend
-000041 1f77                      	rol	dd16uH
-000042 95ea                      	dec	dcnt16u			;decrement counter
-000043 f409                      	brne	d16u_2			;if done
-000044 9508                      	ret				;    return
-000045 1f88                      d16u_2:	rol	drem16uL		;shift dividend into remainder
-000046 1f99                      	rol	drem16uH
-000047 1b8c                      	sub	drem16uL,dv16uL		;remainder = remainder - divisor
-000048 0b9d                      	sbc	drem16uH,dv16uH		;
-000049 f420                      	brcc	d16u_3			;if result negative
-00004a 0f8c                      	add	drem16uL,dv16uL		;    restore remainder
-00004b 1f9d                      	adc	drem16uH,dv16uH
-00004c 9488                      	clc				;    clear carry to be shifted into result
-00004d cff2                      	rjmp	d16u_1			;else
-00004e 9408                      d16u_3:	sec				;    set carry to be shifted into result
-00004f cff0                      	rjmp	d16u_1
+                                 D16_nnn:
+000037 e325                          LDI   r18,  low(reg_Kd)     ;1abcd
+000038 2ed2                          MOV   r13, r18              ;1abcd
+000039 e022                          LDI   r18, high(reg_Kd)     ;1abcd
+00003a 2ee2                          MOV   r14, r18              ;1abcd, 4abcd
+                                 ; r14:r13 = reg_Kd
+                                  
+                                 ; multiplicand in r17:r16 = {A}
+                                 ; multiplier   in r14:r13 = {Kd}
+                                 ; mul. result  in r21:r20:r19:r18
+                                 ; valid result in r21:r20
+00003b 9d1e                          MUL   r17, r14              ;2abcd
+00003c 01a0                          MOVW  r21:r20, r1:r0        ;1abcd
+00003d 9d0d                          MUL   r16, r13              ;2abcd
+00003e 0190                          MOVW  r19:r18, r1:r0        ;1abcd
+00003f 9d1d                          MUL   r17, r13              ;2abcd
+000040 24dd                          CLR   r13                   ;1abcd
+000041 0d30                          ADD   r19, r0               ;1abcd
+000042 1d41                          ADC   r20, r1               ;1abcd
+000043 1d5d                          ADC   r21, r13              ;1abcd
+000044 9ee0                          MUL   r14, r16              ;2abcd
+000045 0d30                          ADD   r19, r0               ;1abcd
+000046 1d41                          ADC   r20, r1               ;1abcd
+000047 1d5d                          ADC   r21, r13              ;1abcd +17abcd= 21abcd
+                                 ; {B} = r21:r20 = r17:r16 * r14:r13 /256/256 = {A}*{Kd}/256/256
+                                 ; {R} = {B} or {B}+1
+                                  
+                                 ; for rounding
+000048 e724                          LDI   r18, reg_N            ;1abcd
+000049 2ed2                          MOV   r13, r18              ;1abcd
+                                 ; r13 = {N}
+                                  
+00004a 9d4d                          MUL   r20, r13              ;2abcd
+00004b 2d20                          MOV   r18, r0               ;1abcd
+00004c 2d31                          MOV   r19, r1               ;1abcd
+00004d 9d5d                          MUL   r21, r13              ;2abcd
+00004e 0d30                          ADD   r19, r0               ;1abcd, +9abcd= 30abcd
+                                 ; {C} = r19:r18 = {B}*{N} = r21:r20 * r13
+                                  
+                                 ; the following conditions were deduced empirically
+                                 ; if( Carry_1=0, {R}={B}, if( Zero_2=1 OR Carry_2=0, {R}={B}, {R}={B}+1 ) )
+                                  
+00004f 1b20                          SUB   r18, r16              ;1abcd
+000050 0b31                          SBC   r19, r17              ;1abcd
+                                 ; {D1} = r19:r18 = {C} - {A} = r19:r18 - r17:r16
+                                  
+000051 f430                          BRCC  DIV_ret               ;2a|1bcd +4a=[34a]
+                                 ; if Carry_1=0, {R}={B}
+                                  
+000052 5c27                          SUBI  r18,  low(reg_Kr)     ;1bcd
+000053 4f3f                          SBCI  r19, high(reg_Kr)     ;1bcd
+                                 ; {D2} = r19:r18 = {D1} - {Kr} = r19:r18 - {Kr}
+                                  
+000054 f019                          BREQ  DIV_ret               ;2b|1cd, +7b=[37b]
+                                 ; if Zero_2=1, {R}={B}
+                                  
+000055 f410                          BRCC  DIV_ret               ;2c|1d, +8c=[38c]
+                                 ; if Carry_2=0, {R}={B}
+                                  
+000056 5f4f                          SUBI  r20,  low(-1)         ;1d
+000057 4f5f                          SBCI  r21, high(-1)         ;1d, +9d=[39d]
+                                 ; {R}={B}+1
+                                  
+                                 DIV_ret:
 
 
 RESOURCE USE INFORMATION
@@ -1127,40 +1157,40 @@ counted separately from r26..r31 here.
 .dseg memory usage only counts static data declared with .byte
 
 "ATmega328P" register use summary:
-x  :   0 y  :   0 z  :   0 r0 :   0 r1 :   0 r2 :   0 r3 :   0 r4 :   0 
+x  :   0 y  :   0 z  :   0 r0 :   6 r1 :   5 r2 :   0 r3 :   0 r4 :   0 
 r5 :   0 r6 :   0 r7 :   0 r8 :   0 r9 :   0 r10:   0 r11:   0 r12:   0 
-r13:   0 r14:   0 r15:   0 r16:   7 r17:   3 r18:   3 r19:   3 r20:   3 
-r21:   0 r22:   2 r23:   2 r24:   4 r25:   5 r26:   0 r27:   0 r28:   3 
-r29:   3 r30:   2 r31:   0 
-Registers used: 12 out of 35 (34.3%)
+r13:   9 r14:   3 r15:   0 r16:   4 r17:   4 r18:  10 r19:   7 r20:   5 
+r21:   5 r22:   3 r23:   2 r24:   2 r25:   2 r26:   7 r27:   0 r28:   0 
+r29:   0 r30:   0 r31:   0 
+Registers used: 15 out of 35 (42.9%)
 
 "ATmega328P" instruction use summary:
-.lds  :   0 .sts  :   0 adc   :   1 add   :   1 adiw  :   0 and   :   0 
+.lds  :   0 .sts  :   0 adc   :   4 add   :   3 adiw  :   0 and   :   0 
 andi  :   0 asr   :   0 bclr  :   0 bld   :   0 brbc  :   0 brbs  :   0 
-brcc  :   1 brcs  :   0 break :   0 breq  :   0 brge  :   0 brhc  :   0 
+brcc  :   2 brcs  :   0 break :   0 breq  :   1 brge  :   0 brhc  :   0 
 brhs  :   0 brid  :   0 brie  :   0 brlo  :   0 brlt  :   0 brmi  :   0 
-brne  :   5 brpl  :   0 brsh  :   0 brtc  :   0 brts  :   0 brvc  :   0 
+brne  :   4 brpl  :   0 brsh  :   0 brtc  :   0 brts  :   0 brvc  :   0 
 brvs  :   0 bset  :   0 bst   :   0 call  :   0 cbi   :   5 cbr   :   0 
-clc   :   2 clh   :   0 cli   :   0 cln   :   0 clr   :   1 cls   :   0 
+clc   :   1 clh   :   0 cli   :   0 cln   :   0 clr   :   1 cls   :   0 
 clt   :   0 clv   :   0 clz   :   0 com   :   0 cp    :   0 cpc   :   0 
-cpi   :   0 cpse  :   0 dec   :   2 eor   :   0 fmul  :   0 fmuls :   0 
+cpi   :   0 cpse  :   0 dec   :   1 eor   :   0 fmul  :   0 fmuls :   0 
 fmulsu:   0 icall :   0 ijmp  :   0 in    :   0 inc   :   0 jmp   :   0 
-ld    :   0 ldd   :   0 ldi   :  10 lds   :   2 lpm   :   0 lsl   :   0 
-lsr   :   0 mov   :   0 movw  :   0 mul   :   0 muls  :   0 mulsu :   0 
+ld    :   0 ldd   :   0 ldi   :   7 lds   :   2 lpm   :   0 lsl   :   0 
+lsr   :   0 mov   :   5 movw  :   2 mul   :   6 muls  :   0 mulsu :   0 
 neg   :   0 nop   :   1 or    :   0 ori   :   0 out   :   0 pop   :   0 
-push  :   0 rcall :   6 ret   :   6 reti  :   0 rjmp  :   5 rol   :   4 
-ror   :   0 sbc   :   1 sbci  :   3 sbi   :   4 sbic  :   2 sbis  :   1 
-sbiw  :   0 sbr   :   0 sbrc  :   0 sbrs  :   0 sec   :   1 seh   :   0 
+push  :   0 rcall :   5 ret   :   6 reti  :   0 rjmp  :   3 rol   :   0 
+ror   :   0 sbc   :   1 sbci  :   5 sbi   :   4 sbic  :   2 sbis  :   1 
+sbiw  :   0 sbr   :   0 sbrc  :   0 sbrs  :   0 sec   :   0 seh   :   0 
 sei   :   0 sen   :   0 ser   :   0 ses   :   0 set   :   0 sev   :   0 
 sez   :   0 sleep :   0 spm   :   0 st    :   0 std   :   0 sts   :   4 
-sub   :   2 subi  :   0 swap  :   0 tst   :   4 wdr   :   0 
-Instructions used: 24 out of 113 (21.2%)
+sub   :   1 subi  :   2 swap  :   0 tst   :   4 wdr   :   0 
+Instructions used: 27 out of 113 (23.9%)
 
 "ATmega328P" memory use summary [bytes]:
 Segment   Begin    End      Code   Data   Used    Size   Use%
 ---------------------------------------------------------------
-[.cseg] 0x000000 0x0000a0    160      0    160   32768   0.5%
+[.cseg] 0x000000 0x0000b2    178      0    178   32768   0.5%
 [.dseg] 0x000100 0x000100      0      0      0    2048   0.0%
 [.eseg] 0x000000 0x000000      0      0      0    1024   0.0%
 
-Assembly complete, 0 errors, 3 warnings
+Assembly complete, 0 errors, 0 warnings
