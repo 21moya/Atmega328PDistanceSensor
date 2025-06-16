@@ -1,18 +1,18 @@
 <ASSEMBLER_INFO>
  <VERSION>2.2.8</VERSION>
  <DEVICE>"ATmega328P"</DEVICE>
- <WORKING_DIR>C:\Users\karlr\OneDrive\Studium\SoSe25\MikroProg\distance-sensor_assembler-project\distance-sensor\Debug</WORKING_DIR>
+ <WORKING_DIR>C:\Users\karlr\OneDrive\Studium\SoSe25\Projekt-MikroProg\distance-sensor_assembler-project\distance-sensor\Debug</WORKING_DIR>
  <INCLUDE_PATH>
   <DIR>C:/Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.6.364\avrasm\inc</DIR>
   <DIR>C:\Program Files (x86)\Atmel\Studio\7.0\toolchain\avr8\avrassembler\Include</DIR>
   <DIR></DIR>
  </INCLUDE_PATH>
- <SOURCE_FILE>C:\Users\karlr\OneDrive\Studium\SoSe25\MikroProg\distance-sensor_assembler-project\distance-sensor\main.asm</SOURCE_FILE>
+ <SOURCE_FILE>C:\Users\karlr\OneDrive\Studium\SoSe25\Projekt-MikroProg\distance-sensor_assembler-project\distance-sensor\main.asm</SOURCE_FILE>
  <INCLUDED_FILES>
   <FILE>C:/Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.6.364\avrasm\inc\m328Pdef.inc</FILE>
  </INCLUDED_FILES>
  <OBJECT_FILES>
-  <FILE>C:\Users\karlr\OneDrive\Studium\SoSe25\MikroProg\distance-sensor_assembler-project\distance-sensor\Debug\distance-sensor.obj</FILE>
+  <FILE>C:\Users\karlr\OneDrive\Studium\SoSe25\Projekt-MikroProg\distance-sensor_assembler-project\distance-sensor\Debug\distance-sensor.obj</FILE>
  </OBJECT_FILES>
  <HEX_FILES>
   <FILE>distance-sensor.hex</FILE>
@@ -22,19 +22,19 @@
   <FILE>distance-sensor.lss</FILE>
  </OUTPUT_FILES>
  <LABELS>
-  <initUART><FILE>C:\Users\karlr\OneDrive\Studium\SoSe25\MikroProg\distance-sensor_assembler-project\distance-sensor\main.asm</FILE><LINE>35</LINE></initUART>
-  <start><FILE>C:\Users\karlr\OneDrive\Studium\SoSe25\MikroProg\distance-sensor_assembler-project\distance-sensor\main.asm</FILE><LINE>43</LINE></start>
-  <measure><FILE>C:\Users\karlr\OneDrive\Studium\SoSe25\MikroProg\distance-sensor_assembler-project\distance-sensor\main.asm</FILE><LINE>48</LINE></measure>
-  <short_delay><FILE>C:\Users\karlr\OneDrive\Studium\SoSe25\MikroProg\distance-sensor_assembler-project\distance-sensor\main.asm</FILE><LINE>92</LINE></short_delay>
-  <await_signal><FILE>C:\Users\karlr\OneDrive\Studium\SoSe25\MikroProg\distance-sensor_assembler-project\distance-sensor\main.asm</FILE><LINE>65</LINE></await_signal>
-  <start_timer><FILE>C:\Users\karlr\OneDrive\Studium\SoSe25\MikroProg\distance-sensor_assembler-project\distance-sensor\main.asm</FILE><LINE>70</LINE></start_timer>
-  <sensor_activity><FILE>C:\Users\karlr\OneDrive\Studium\SoSe25\MikroProg\distance-sensor_assembler-project\distance-sensor\main.asm</FILE><LINE>86</LINE></sensor_activity>
-  <convert_to_cm><FILE>C:\Users\karlr\OneDrive\Studium\SoSe25\MikroProg\distance-sensor_assembler-project\distance-sensor\main.asm</FILE><LINE>132</LINE></convert_to_cm>
-  <transmit_distance><FILE>C:\Users\karlr\OneDrive\Studium\SoSe25\MikroProg\distance-sensor_assembler-project\distance-sensor\main.asm</FILE><LINE>118</LINE></transmit_distance>
-  <long_delay_init><FILE>C:\Users\karlr\OneDrive\Studium\SoSe25\MikroProg\distance-sensor_assembler-project\distance-sensor\main.asm</FILE><LINE>98</LINE></long_delay_init>
-  <stop_timer><FILE>C:\Users\karlr\OneDrive\Studium\SoSe25\MikroProg\distance-sensor_assembler-project\distance-sensor\main.asm</FILE><LINE>78</LINE></stop_timer>
-  <long_delay><FILE>C:\Users\karlr\OneDrive\Studium\SoSe25\MikroProg\distance-sensor_assembler-project\distance-sensor\main.asm</FILE><LINE>104</LINE></long_delay>
-  <transmit_distance_low><FILE>C:\Users\karlr\OneDrive\Studium\SoSe25\MikroProg\distance-sensor_assembler-project\distance-sensor\main.asm</FILE><LINE>123</LINE></transmit_distance_low>
-  <convert_ret><FILE>C:\Users\karlr\OneDrive\Studium\SoSe25\MikroProg\distance-sensor_assembler-project\distance-sensor\main.asm</FILE><LINE>200</LINE></convert_ret>
+  <initUART><FILE>C:\Users\karlr\OneDrive\Studium\SoSe25\Projekt-MikroProg\distance-sensor_assembler-project\distance-sensor\main.asm</FILE><LINE>37</LINE></initUART>
+  <start><FILE>C:\Users\karlr\OneDrive\Studium\SoSe25\Projekt-MikroProg\distance-sensor_assembler-project\distance-sensor\main.asm</FILE><LINE>46</LINE></start>
+  <measure><FILE>C:\Users\karlr\OneDrive\Studium\SoSe25\Projekt-MikroProg\distance-sensor_assembler-project\distance-sensor\main.asm</FILE><LINE>52</LINE></measure>
+  <short_delay><FILE>C:\Users\karlr\OneDrive\Studium\SoSe25\Projekt-MikroProg\distance-sensor_assembler-project\distance-sensor\main.asm</FILE><LINE>100</LINE></short_delay>
+  <await_signal><FILE>C:\Users\karlr\OneDrive\Studium\SoSe25\Projekt-MikroProg\distance-sensor_assembler-project\distance-sensor\main.asm</FILE><LINE>70</LINE></await_signal>
+  <start_timer><FILE>C:\Users\karlr\OneDrive\Studium\SoSe25\Projekt-MikroProg\distance-sensor_assembler-project\distance-sensor\main.asm</FILE><LINE>76</LINE></start_timer>
+  <sensor_activity><FILE>C:\Users\karlr\OneDrive\Studium\SoSe25\Projekt-MikroProg\distance-sensor_assembler-project\distance-sensor\main.asm</FILE><LINE>93</LINE></sensor_activity>
+  <convert_to_cm><FILE>C:\Users\karlr\OneDrive\Studium\SoSe25\Projekt-MikroProg\distance-sensor_assembler-project\distance-sensor\main.asm</FILE><LINE>140</LINE></convert_to_cm>
+  <transmit_distance><FILE>C:\Users\karlr\OneDrive\Studium\SoSe25\Projekt-MikroProg\distance-sensor_assembler-project\distance-sensor\main.asm</FILE><LINE>127</LINE></transmit_distance>
+  <long_delay_init><FILE>C:\Users\karlr\OneDrive\Studium\SoSe25\Projekt-MikroProg\distance-sensor_assembler-project\distance-sensor\main.asm</FILE><LINE>107</LINE></long_delay_init>
+  <stop_timer><FILE>C:\Users\karlr\OneDrive\Studium\SoSe25\Projekt-MikroProg\distance-sensor_assembler-project\distance-sensor\main.asm</FILE><LINE>85</LINE></stop_timer>
+  <long_delay><FILE>C:\Users\karlr\OneDrive\Studium\SoSe25\Projekt-MikroProg\distance-sensor_assembler-project\distance-sensor\main.asm</FILE><LINE>113</LINE></long_delay>
+  <transmit_distance_low><FILE>C:\Users\karlr\OneDrive\Studium\SoSe25\Projekt-MikroProg\distance-sensor_assembler-project\distance-sensor\main.asm</FILE><LINE>132</LINE></transmit_distance_low>
+  <convert_ret><FILE>C:\Users\karlr\OneDrive\Studium\SoSe25\Projekt-MikroProg\distance-sensor_assembler-project\distance-sensor\main.asm</FILE><LINE>208</LINE></convert_ret>
  </LABELS>
 </ASSEMBLER_INFO>

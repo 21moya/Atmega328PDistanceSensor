@@ -35,12 +35,12 @@ cbi PORTD, light	; Schalte Licht aus (Low-Level)
 
 ; ### Initialisierung der UART-Schnittstelle
 initUART :
-	ldi r17, LOW (ubbr)		; Lade unteres Byte von UBRR in r17
-	sts UBRR0L, r17			; Setze UBRR0L für Baudrate
-	ldi r17, HIGH (ubbr)	; Lade oberes Byte von UBRR in r17
-	sts UBRR0H, r17			; Setze UBRR0H für Baudrate
-	ldi r16, (1 << RXEN0 )	; Aktiviere UART-Sender
-	sts UCSR0B, r16			; Setze Steuerregister UCSR0B
+	ldi r17, LOW (ubrr)						; Lade unteres Byte von UBRR in r17
+	sts UBRR0L, r17							; Setze UBRR0L für Baudrate
+	ldi r17, HIGH (ubrr)					; Lade oberes Byte von UBRR in r17
+	sts UBRR0H, r17							; Setze UBRR0H für Baudrate
+	ldi r16, (1 << RXEN0 ) | (1 << TXEN0 )	; Aktiviere UART-Sender und Empfänger
+	sts UCSR0B, r16							; Setze Steuerregister UCSR0B
 
 ; ### Hauptprogramm: Überwache Button und starte Messung
 start:

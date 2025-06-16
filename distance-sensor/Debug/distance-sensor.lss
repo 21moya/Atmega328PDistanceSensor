@@ -1,10 +1,10 @@
 
-AVRASM ver. 2.2.8  C:\Users\karlr\OneDrive\Studium\SoSe25\MikroProg\distance-sensor_assembler-project\distance-sensor\main.asm Mon Jun 16 19:00:46 2025
+AVRASM ver. 2.2.8  C:\Users\karlr\OneDrive\Studium\SoSe25\Projekt-MikroProg\distance-sensor_assembler-project\distance-sensor\main.asm Mon Jun 16 20:31:47 2025
 
 [builtin](2): Including file 'C:/Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.6.364\avrasm\inc\m328Pdef.inc'
 [builtin](2): Including file 'C:/Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.6.364\avrasm\inc\m328Pdef.inc'
                                  
-                                 .equ fcpu = 16000000
+                                 ; ### Definitionen der Konstanten
                                  
                                  ;***** Created: 2011-02-09 12:03 ******* Source: ATmega328P.xml **********
                                  ;*************************************************************************
@@ -985,203 +985,211 @@ AVRASM ver. 2.2.8  C:\Users\karlr\OneDrive\Studium\SoSe25\MikroProg\distance-sen
                                  
                                  ; ***** END OF FILE ******************************************************
                                  
-                                 .equ baud = 9600
-                                 .equ ubbr = (fcpu / 16 / baud - 1) 
-                                 .equ exec_delay = 40
-                                 .equ button = 2
-                                 .equ sensor = 3
-                                 .equ light = 4
-                                 .equ measure_delay_time = 137143
+                                 .equ fcpu = 16000000			    ; CPU-Frequenz in Hz
+                                 .equ baud = 9600					; Baudrate für UART-Kommunikation
+                                 .equ ubrr = (fcpu / 16 / baud - 1)  ; Berechnung des UBRR-Wertes für die Baudrate
+                                 .equ exec_delay = 40				; Zählerwert für kurze Verzögerung (ca. 10ms)
+                                 .equ button = 2						; Pin-Nummer für den Button (Eingang)
+                                 .equ sensor = 3						; Pin-Nummer für den Sensor (Ein-/Ausgang)
+                                 .equ light = 4						; Pin-Nummer für das Licht (Ausgang)
+                                 .equ measure_delay_time = 137143	; Zählerwert für lange Verzögerung (ca. 0,5 Sekunden)
                                  
-                                 .equ Divisor = 116                  ; Konstanter Divisor
+                                 ; ### Konstanten für die Distanzumrechnung
+                                 .equ Divisor = 116                  ; Konstanter Divisor für Umrechnung (Ticks in cm)
                                  .equ reg_Kd=(2*256*256/Divisor+1)/2 ; 2^16 / Konstante = 11314 das ist der multiplikative Kehrwert von N (mit welcher Zahl muss multipliziert werden um 1 zu erhalten)
                                  .equ reg_Kr=(1-Divisor)/2           ; = -57 Ist eine Rundungs bzw. Korrektur Konstante
                                  
-                                 .def input_L 	= r16        ; low byte des Eingabewerts
-                                 .def input_H 	= r17        ; high byte des Eingabewerts
-                                 .def Kd_L       = r13     ; low byte von Kd
-                                 .def Kd_H       = r14     ; high byte von Kd
-                                 .def tmp_L      = r18	  ; Temp
-                                 .def tmp_H      = r19	  ; Temp
-                                 .def result_L   = r20 	  ; Highest Temp / Result 
-                                 .def result_H   = r21	  ; Highest Temp / Result
+                                 ; ### Registerdefinitionen
+                                 .def input_L 	= r16     ; Low-Byte des Eingabewerts (gemessene Zeit in Ticks)
+                                 .def input_H 	= r17     ; High-Byte des Eingabewerts
+                                 .def Kd_L       = r13     ; Low-Byte von Kd (multiplikativer Kehrwert)
+                                 .def Kd_H       = r14     ; High-Byte von Kd
+                                 .def tmp_L      = r18	  ; Temporäres Register Low-Byte
+                                 .def tmp_H      = r19	  ; Temporäres Register High-Byte
+                                 .def result_L   = r20 	  ; Low-Byte des Ergebnisses (Distanz in cm)
+                                 .def result_H   = r21	  ; High-Byte des Ergebnisses
                                  
+                                 .def cnt = r22			  ; Zähler für kurze Verzögerung
+                                 .def cnt_low = r23		  ; Low-Byte Zähler für lange Verzögerung
+                                 .def cnt_mid = r24		  ; Mid-Byte Zähler für lange Verzögerung
+                                 .def cnt_high = r25		  ; High-Byte Zähler für lange Verzögerung
                                  
+                                 ; ### Konfiguration der I/O-Ports
+000000 9853                      cbi DDRD, sensor	; Setze Sensor-Pin als Eingang
+000001 9a54                      sbi DDRD, light		; Setze Licht-Pin als Ausgang
+000002 985c                      cbi PORTD, light	; Schalte Licht aus (Low-Level)
                                  
-                                 .def cnt = r22
-                                 .def cnt_low = r23
-                                 .def cnt_mid = r24
-                                 .def cnt_high = r25
-                                 
-000000 9853                      cbi DDRD, sensor
-                                 
-000001 9a54                      sbi DDRD, light
-000002 985c                      cbi PORTD, light
-                                 
+                                 ; ### Initialisierung der UART-Schnittstelle
                                  initUART :
-000003 e617                      	ldi r17, LOW (ubbr) ; set ubbr
-000004 9310 00c4                 	sts UBRR0L, r17
-000006 e010                      	ldi r17, HIGH (ubbr)
-000007 9310 00c5                 	sts UBRR0H, r17
-000009 e108                      	ldi r16, (1 << RXEN0 ) | (1 << TXEN0 ) ; enable tx and rx
-00000a 9300 00c1                 	sts UCSR0B, r16
+000003 e617                      	ldi r17, LOW (ubrr)						; Lade unteres Byte von UBRR in r17
+000004 9310 00c4                 	sts UBRR0L, r17							; Setze UBRR0L für Baudrate
+000006 e010                      	ldi r17, HIGH (ubrr)					; Lade oberes Byte von UBRR in r17
+000007 9310 00c5                 	sts UBRR0H, r17							; Setze UBRR0H für Baudrate
+000009 e108                      	ldi r16, (1 << RXEN0 ) | (1 << TXEN0 )	; Aktiviere UART-Sender und Empfänger
+00000a 9300 00c1                 	sts UCSR0B, r16							; Setze Steuerregister UCSR0B
                                  
+                                 ; ### Hauptprogramm: Überwache Button und starte Messung
                                  start:
-00000c 994a                      	sbic PIND, button
-00000d d001                      	rcall measure 
-00000e cffd                      	rjmp start
+00000c 994a                      	sbic PIND, button	; Überspringe nächsten Befehl, wenn Button nicht gedrückt
+00000d d001                      	rcall measure		; Rufe Messroutine auf, wenn Button gedrückt ist
+00000e cffd                      	rjmp start			; Springe zurück zur Schleife
                                  
+                                 ; ### Messroutine: Führe Distanzmessung durch
                                  measure:
-00000f e268                      	ldi cnt, exec_delay			; Count Setzen auf exec_Delay fÃ¼r short Delay
-000010 9a53                      	sbi DDRD, sensor			; Sensor Port wird Output
-000011 9a5b                      	sbi PORTD, sensor			; Signal wird gesendet
-000012 d023                      	rcall short_delay			; 10ms Short Delay
-000013 985b                      	cbi PORTD, sensor			; Stoppe Senden des Signals
-000014 9853                      	cbi DDRD, sensor			; Ã„ndern des Outputs --> Input
-000015 d008                      	rcall await_signal			; Warte auf Signal
-000016 9a5c                      	sbi PORTD, light 			; Signal --> Turn Light ON 
-000017 d009                      	rcall start_timer			; Timer mit Vorteiler 8 Wird gestartet --> Pro Count vergeht 0,5us
-000018 d019                      	rcall sensor_activity		; Warten bis der sensor kein Signal mehr sendet
-000019 d03b                      	rcall convert_to_cm			; Umrechnung der gemessenen Zeit: Ticks / (((1us/0,0343cm)/0.5) * 2) = Ticks / 116 
-00001a d02d                      	rcall transmit_distance		; UART Transmission of calculated Distance
-00001b d01e                      	rcall long_delay_init		; Delay um zuviele Nutzereingaben zu verhindern
-00001c 985c                       	cbi PORTD, light			; Licht wird ausgemacht
-00001d 9508                      	ret							; Start --> LOOP
+00000f e268                      	ldi cnt, exec_delay			; Setze Zähler für kurze Verzögerung (exec_delay)
+000010 9a53                      	sbi DDRD, sensor			; Setze Sensor-Pin als Ausgang
+000011 9a5b                      	sbi PORTD, sensor			; Sende Signal an Sensor (High-Level)
+000012 d023                      	rcall short_delay			; Warte kurze Zeit (ca. 10ms)
+000013 985b                      	cbi PORTD, sensor			; Stoppe das Senden des Signals (Low-Level)
+000014 9853                      	cbi DDRD, sensor			; Setze Sensor-Pin zurück auf Eingang
+000015 d008                      	rcall await_signal			; Warte auf Rücksignal vom Sensor
+000016 9a5c                      	sbi PORTD, light 			; Schalte Licht ein (High-Level)
+000017 d009                      	rcall start_timer			; Starte Timer mit Vorteiler 8 (0,5us pro Tick)
+000018 d019                      	rcall sensor_activity		; Warte, bis Sensor kein Signal mehr sendet
+000019 d03b                      	rcall convert_to_cm			; Rechne gemessene Zeit in Distanz (cm) um: Ticks / (((1us/0,0343cm)/0.5) * 2) = Ticks / 116 
+00001a d02d                      	rcall transmit_distance		; Sende Distanz über UART
+00001b d01e                      	rcall long_delay_init		; Initialisiere lange Verzögerung gegen zu viele Eingaben
+00001c 985c                       	cbi PORTD, light			; Schalte Licht aus (Low-Level)
+00001d 9508                      	ret							; Kehre zur Hauptschleife zurück
                                  
+                                 ; ### Warte auf Sensorsignal
                                  await_signal:
-00001e 9b4b                      	sbis PIND, sensor
-00001f cffe                      	rjmp await_signal
-000020 9508                      	ret
+00001e 9b4b                      	sbis PIND, sensor	; Überspringe nächsten Befehl, wenn Sensor-Pin gesetzt
+00001f cffe                      	rjmp await_signal	; Springe zurück, wenn kein Signal
+000020 9508                      	ret					; Kehre zurück, wenn Signal erkannt
                                  
+                                 ; ### Starte Timer 1 mit Vorteiler 8
                                  start_timer:
-000021 e0a0                      	ldi r26,0
-000022 93a0 0085                 	sts TCNT1H, r26
-000024 93a0 0084                 	sts TCNT1L, r26
-000026 e0a2                      	ldi r26, (1 << 1)
-000027 93a0 0081                 	sts TCCR1B, r26 
-000029 9508                      	ret
+000021 e0a0                      	ldi r26,0			; Setze r26 auf 0
+000022 93a0 0085                 	sts TCNT1H, r26		; Setze Timer 1 High-Byte auf 0
+000024 93a0 0084                 	sts TCNT1L, r26		; Setze Timer 1 Low-Byte auf 0
+000026 e0a2                      	ldi r26, (1 << 1)	; Setze CS11-Bit für Vorteiler 8
+000027 93a0 0081                 	sts TCCR1B, r26		; Starte Timer 1
+000029 9508                      	ret					; Kehre zurück
                                  
+                                 ; ### Stoppe Timer 1 und lese Zählerwert
                                  stop_timer:
-00002a e0a0                      	ldi r26,0
-00002b 93a0 0081                 	sts TCCR1B, r26
+00002a e0a0                      	ldi r26,0				; Setze r26 auf 0
+00002b 93a0 0081                 	sts TCCR1B, r26			; Stoppe Timer 1
+00002d 9100 0084                 	lds input_L, TCNT1L		; Lade Timer 1 Low-Byte in r16 (input_L)
+00002f 9110 0085                 	lds input_H, TCNT1H		; Lade Timer 1 High-Byte in r17 (input_H)
+000031 9508                      	ret						; Kehre zurück
                                  
-00002d 9100 0084                 	lds r16, TCNT1L
-00002f 9110 0085                 	lds r17, TCNT1H
-000031 9508                      	ret
-                                 
+                                 ; ### Warte auf Sensor-Aktivität
                                  sensor_activity:
-000032 994b                      	sbic PIND, sensor
-000033 cffe                      	rjmp sensor_activity
-000034 dff5                      	rcall stop_timer
-000035 9508                      	ret
+000032 994b                      	sbic PIND, sensor		; Überspringe nächsten Befehl, wenn Sensor-Pin nicht gesetzt
+000033 cffe                      	rjmp sensor_activity	; Springe zurück, wenn Signal aktiv
+000034 dff5                      	rcall stop_timer		; Stoppe Timer, wenn Signal endet
+000035 9508                      	ret						; Kehre zurück
                                  
+                                 ; ### Kurze Verzögerung (ca. 10ms)
                                  short_delay:
-000036 956a                      	dec cnt
-000037 2366                      	tst cnt
-000038 f7e9                      	brne short_delay
-000039 9508                      	ret
+000036 956a                      	dec cnt				; Dekrementiere Zähler
+000037 2366                      	tst cnt				; Teste, ob Zähler Null ist
+000038 f7e9                      	brne short_delay	; Wenn nicht Null, wiederhole
+000039 9508                      	ret					; Kehre zurück, wenn Zähler Null
                                  
+                                 ; ### Initialisiere lange Verzögerung
                                  long_delay_init:
-00003a eb77                      	ldi cnt_low, byte1 ( measure_delay_time )
-00003b e187                      	ldi cnt_mid, byte2 ( measure_delay_time )
-00003c e092                      	ldi cnt_high, byte3 ( measure_delay_time )
+00003a eb77                      	ldi cnt_low, byte1 ( measure_delay_time )	; Lade unteres Byte von measure_delay_time
+00003b e187                      	ldi cnt_mid, byte2 ( measure_delay_time )	; Lade mittleres Byte von measure_delay_time
+00003c e092                      	ldi cnt_high, byte3 ( measure_delay_time )	; Lade oberes Byte von measure_delay_time
                                  
-                                 ; 	0,5 Sekunden Delay
+                                 ; ### Lange Verzögerung (ca. 0,5 Sekunden)
                                  long_delay:
-00003d 9488                      	clc
-00003e 4071                      	sbci cnt_low ,1
-00003f 4080                      	sbci cnt_mid ,0
-000040 4090                      	sbci cnt_high ,0
-000041 2399                      	tst cnt_high
-000042 f7d1                      	brne long_delay 
-000043 2388                      	tst cnt_mid
-000044 f7c1                      	brne long_delay
-000045 2377                      	tst cnt_low
-000046 f7b1                      	brne long_delay
-000047 9508                      	ret
+00003d 9488                      	clc					; Lösche Carry-Flag
+00003e 4071                      	sbci cnt_low ,1		; Subtrahiere 1 von cnt_low mit Carry
+00003f 4080                      	sbci cnt_mid ,0		; Subtrahiere 0 von cnt_mid mit Carry
+000040 4090                      	sbci cnt_high ,0	; Subtrahiere 0 von cnt_high mit Carry
+000041 2399                      	tst cnt_high		; Teste cnt_high
+000042 f7d1                      	brne long_delay		; Wenn nicht Null, wiederhole
+000043 2388                      	tst cnt_mid			; Teste cnt_mid
+000044 f7c1                      	brne long_delay		; Wenn nicht Null, wiederhole
+000045 2377                      	tst cnt_low			; Teste cnt_low
+000046 f7b1                      	brne long_delay		; Wenn nicht Null, wiederhole
+000047 9508                      	ret					; Kehre zurück, wenn Zähler Null
                                  
-                                 ; UART Transmission of Distance
+                                 ; ### Sende Distanz über UART
                                  transmit_distance:
-000048 9110 00c0                 	lds r17, UCSR0A
-00004a ff15                      	sbrs r17, UDRE0
-00004b cffc                      	rjmp transmit_distance
-00004c 9350 00c6                 	sts UDR0, result_H
+000048 9110 00c0                 	lds r17, UCSR0A				; Lade UART-Statusregister
+00004a ff15                      	sbrs r17, UDRE0				; Überspringe, wenn Sendepuffer leer
+00004b cffc                      	rjmp transmit_distance		; Warte, bis Sendepuffer leer
+00004c 9350 00c6                 	sts UDR0, result_H			; Sende High-Byte der Distanz
                                  transmit_distance_low:
-00004e 9110 00c0                 	lds r17, UCSR0A
-000050 ff15                      	sbrs r17, UDRE0
-000051 cffc                      	rjmp transmit_distance_low
-000052 9340 00c6                 	sts UDR0, result_L
-000054 9508                      	ret
+00004e 9110 00c0                 	lds r17, UCSR0A				; Lade UART-Statusregister
+000050 ff15                      	sbrs r17, UDRE0				; Überspringe, wenn Sendepuffer leer
+000051 cffc                      	rjmp transmit_distance_low	; Warte, bis Sendepuffer leer
+000052 9340 00c6                 	sts UDR0, result_L			; Sende Low-Byte der Distanz
+000054 9508                      	ret							; Kehre zurück
                                  
-                                 
-                                 
+                                 ; ### Umrechnung der Zeit in Distanz (cm)
                                  convert_to_cm:
-                                 ;	Problem keine Hardwareseitige Division mÃ¶glich --> Softwareseitiges Dividieren durch Multiplikation
-                                 ; 	Das ganze ist keine wirkliche Division sondern eine AnnÃ¤herung mit einem Skalierungsfaktor
+                                 ; Problem keine Hardwareseitige Division mÃ¶glich --> Softwareseitiges Dividieren durch Multiplikation
+                                 ; Das ganze ist keine wirkliche Division sondern eine AnnÃ¤herung mit einem Skalierungsfaktor
                                  
-                                 ;	16*16 Bit Multiplikation (a_hi << 8 + a_lo) * (b_hi << 8 + b_lo) --> 
-                                 ;	= a*b 
-                                 ;	= a_lo * b_lo 
-                                 ;	+ a_lo * b_hi << 8 
-                                 ;	+ a_hi * b_lo << 8
-                                 ; 	+ a_hi * b_hi << 16
+                                 ; 16*16-Bit-Multiplikation: (input_H << 8 + input_L) * (Kd_H << 8 + Kd_L):
+                                 ;	= input*Kd 
+                                 ;	= input_lo * Kd_lo 
+                                 ;	+ input_lo * Kd_hi << 8 
+                                 ;	+ input_hi * Kd_lo << 8
+                                 ;	+ input_hi * Kd_hi << 16
                                  
-                                 ; 	Initialisieren der reg_Kd (Konstante der Division) number in 2 registern / 16Bit
-000055 e325                          ldi tmp_L, low(reg_Kd)
-000056 2ed2                          mov Kd_L, tmp_L 
-000057 e022                          ldi tmp_L, high(reg_Kd) 
-000058 2ee2                          mov Kd_H, tmp_L
+                                 ; Initialisieren der reg_Kd (Konstante der Division) number in 2 registern / 16Bit
+000055 e325                          ldi tmp_L, low(reg_Kd)			; Lade Low-Byte von Kd
+000056 2ed2                          mov Kd_L, tmp_L					; Speichere in Kd_L
+000057 e022                          ldi tmp_L, high(reg_Kd)			; Lade High-Byte von Kd
+000058 2ee2                          mov Kd_H, tmp_L					; Speichere in Kd_H
                                   
-                                 ; 	Erster Teil der Rechnung : a_hi * b_hi
-000059 9d1e                          mul input_H, Kd_H
-00005a 01a0                          movw result_H:result_L, r1:r0
+                                 ; Schritt 1: input_H * Kd_H
+000059 9d1e                          mul input_H, Kd_H				; Multipliziere High-Bytes
+00005a 01a0                          movw result_H:result_L, r1:r0	; Speichere Ergebnis
                                  
-                                 ; 	Zweiter Teil der Rechnung : a_lo * b_lo
-00005b 9d0d                          mul input_L, Kd_L
-00005c 0190                          movw tmp_H:tmp_L, r1:r0
+                                 ; Schritt 2: input_L * Kd_L
+00005b 9d0d                          mul input_L, Kd_L			; Multipliziere Low-Bytes
+00005c 0190                          movw tmp_H:tmp_L, r1:r0		; Speichere Zwischenergebnis
                                  
-                                 ; 	Dritter Teil der Rechnung : a_hi * b_lo	
-00005d 9d1d                          mul input_H, Kd_L
-00005e 24dd                          clr Kd_L
-00005f 0d30                          add tmp_H, r0
-000060 1d41                          adc result_L, r1
-000061 1d5d                          adc result_H, Kd_L
+                                 ; Schritt 3: input_H * Kd_L
+00005d 9d1d                          mul input_H, Kd_L			; Multipliziere input_H mit Kd_L
+00005e 24dd                          clr Kd_L					; Lösche Kd_L für Carry
+00005f 0d30                          add tmp_H, r0				; Addiere Low-Byte
+000060 1d41                          adc result_L, r1			; Addiere High-Byte mit Carry
+000061 1d5d                          adc result_H, Kd_L			; Addiere Carry zu result_H
                                  
-                                 ; 	Vierter Teil der Rechnung : a_lo * b_hi 
-000062 9ee0                          mul Kd_H, input_L
-000063 0d30                          add tmp_H, r0
-000064 1d41                          adc result_L, r1
-000065 1d5d                          adc result_H, Kd_L
+                                 ; Schritt 4: Kd_H * input_L
+000062 9ee0                          mul Kd_H, input_L			; Multipliziere Kd_H mit input_L
+000063 0d30                          add tmp_H, r0				; Addiere Low-Byte
+000064 1d41                          adc result_L, r1			; Addiere High-Byte mit Carry
+000065 1d5d                          adc result_H, Kd_L			; Addiere Carry zu result_H
                                  
-                                 ; 	Runden
-000066 e724                          ldi tmp_L, Divisor
-000067 2ed2                          mov Kd_L, tmp_L
+                                 ; Runden des Ergebnisses
+000066 e724                          ldi tmp_L, Divisor			; Lade Divisor
+000067 2ed2                          mov Kd_L, tmp_L				; Speichere in Kd_L
                                  
-                                 ;	Multipliziere mittleren Teil (r20) mit N
-000068 9d4d                          mul result_L, Kd_L
-000069 2d20                          mov tmp_L, r0
-00006a 2d31                          mov tmp_H, r1
+                                 ; Multipliziere result_L mit Divisor
+000068 9d4d                          mul result_L, Kd_L			; Multipliziere
+000069 2d20                          mov tmp_L, r0				; Speichere Low-Byte
+00006a 2d31                          mov tmp_H, r1				; Speichere High-Byte
                                  
-                                 ;	Multipliziere oberen Teil (r21) mit N
-00006b 9d5d                          mul result_H, Kd_L
-00006c 0d30                          add tmp_H, r0	; NÃ¤herungsprodukt
+                                 ; Multipliziere result_H mit Divisor
+00006b 9d5d                          mul result_H, Kd_L			; Multipliziere
+00006c 0d30                          add tmp_H, r0				; Näherung: Addiere zu tmp_H
                                  
-                                 ;	NÃ¤herungswert = Ergebnis * N
-                                 ; 	Nun wird das Ergebnis noch mit dem Input verglichen: Input * Kd (in etwa) = Input * 2^16 / N
-00006d 1b20                          sub tmp_L, input_L
-00006e 0b31                          sbc tmp_H, input_H
+                                 ; Näherungsweise = Ergebnis * N
+                                 ; Vergleiche mit Eingabewert: Input * Kd (in etwa) = Input * 2^16 / N
+00006d 1b20                          sub tmp_L, input_L			; Subtrahiere input_L
+00006e 0b31                          sbc tmp_H, input_H			; Subtrahiere input_H mit Carry
                                  
-                                 ; 	Wenn carry leer (kein Ãœberlauf), dann fertig
-00006f f430                          brcc convert_ret
-                                 ; 	Bei zu GroÃŸer Rundung Korrektur nach Untern
-000070 5c27                          subi tmp_L,  low(reg_Kr)
-000071 4f3f                          sbci tmp_H, high(reg_Kr)
-000072 f019                          breq convert_ret
-000073 f410                          brcc convert_ret
+                                 ; Wenn kein Überlauf, fertig
+00006f f430                          brcc convert_ret			; Springe, wenn kein Carry
+                                 ; Korrektur bei zu großer Rundung
+000070 5c27                          subi tmp_L,  low(reg_Kr)	; Subtrahiere Korrektur Low
+000071 4f3f                          sbci tmp_H, high(reg_Kr)	; Subtrahiere Korrektur High
+000072 f019                          breq convert_ret			; Springe, wenn gleich
+000073 f410                          brcc convert_ret			; Springe, wenn kein Carry
                                   
-                                 ; 	Nur wenn das Produkt mit Kd minimal zu groÃŸ war, wird 1 abgezogen 
-000074 5f4f                          subi result_L,  low(-1)
-000075 4f5f                          sbci result_H, high(-1)
+                                 ; Korrigiere Ergebnis um 1, falls nötig
+000074 5f4f                          subi result_L,  low(-1)		; Addiere 1 zu result_L
+000075 4f5f                          sbci result_H, high(-1)		; Addiere Carry zu result_H
                                  
                                  convert_ret:
 
