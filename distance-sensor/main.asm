@@ -7,9 +7,20 @@
 .equ light = 4
 .equ measure_delay_time = 137143
 
-.set reg_N = 116                  ; {N}
-.set reg_Kd=(2*256*256/reg_N+1)/2 ; {Kd}
-.set reg_Kr=(1-reg_N)/2           ; {Kr}
+.equ Divisor = 116                  ; Konstanter Divisor
+.equ reg_Kd=(2*256*256/Divisor+1)/2 ; 2^16 / Konstante = 11314 das ist der multiplikative Kehrwert von N (mit welcher Zahl muss multipliziert werden um 1 zu erhalten)
+.equ reg_Kr=(1-Divisor)/2           ; = -57 Ist eine Rundungs bzw. Korrektur Konstante
+
+.equ input_L = r16        ; low byte des Eingabewerts
+.equ input_H = r17        ; high byte des Eingabewerts
+.equ Kd_L       = r13     ; low byte von Kd
+.equ Kd_H       = r14     ; high byte von Kd
+.equ tmp_L      = r18	  ; Temp
+.equ tmp_H      = r19	  ; Temp
+.equ result_L   = r20 	  ; Highest Temp / Result 
+.equ result_H   = r21	  ; Highest Temp / Result
+
+
 
 .def cnt = r22
 .def cnt_low = r23
@@ -17,6 +28,7 @@
 .def cnt_high = r25
 
 cbi DDRD, sensor
+
 sbi DDRD, light
 cbi PORTD, light
 
@@ -44,7 +56,6 @@ measure:
 	sbi PORTD, light
 	rcall start_timer
 	rcall sensor_activity
-	rcall stop_timer
 	rcall convert_to_cm
 	rcall transmit_distance
 	rcall long_delay_init
@@ -67,6 +78,7 @@ start_timer:
 stop_timer:
 	ldi r26,0
 	sts TCCR1B, r26
+
 	lds r16, TCNT1L
 	lds r17, TCNT1H
 	ret
@@ -74,6 +86,7 @@ stop_timer:
 sensor_activity:
 	sbic PIND, sensor
 	rjmp sensor_activity
+	rcall stop_timer
 	ret
 
 short_delay:
