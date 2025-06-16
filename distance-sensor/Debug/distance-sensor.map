@@ -1,5 +1,5 @@
 
-AVRASM ver. 2.2.8  C:\Users\Benedikt\workspace\distance-sensor_assembler-project\distance-sensor\main.asm Thu Jun 12 21:08:33 2025
+AVRASM ver. 2.2.8  C:\Users\karlr\OneDrive\Studium\SoSe25\MikroProg\distance-sensor_assembler-project\distance-sensor\main.asm Mon Jun 16 19:00:46 2025
 
 
 EQU  SIGNATURE_000 0000001e
@@ -695,23 +695,40 @@ EQU  ACIaddr      0000002e
 EQU  TWIaddr      00000030
 EQU  SPMRaddr     00000032
 EQU  INT_VECTORS_SIZE 00000034
+EQU  fcpu         00f42400
+EQU  baud         00002580
+EQU  ubbr         00000067
 EQU  exec_delay   00000028
 EQU  button       00000002
 EQU  sensor       00000003
 EQU  light        00000004
 EQU  measure_delay_time 000217b7
-SET  reg_N        00000074
-SET  reg_Kd       00000235
-SET  reg_Kr       ffffffc7
+EQU  Divisor      00000074
+EQU  reg_Kd       00000235
+EQU  reg_Kr       ffffffc7
+DEF  input_L      r16
+DEF  input_H      r17
+DEF  Kd_L         r13
+DEF  Kd_H         r14
+DEF  tmp_L        r18
+DEF  tmp_H        r19
+DEF  result_L     r20
+DEF  result_H     r21
 DEF  cnt          r22
 DEF  cnt_low      r23
 DEF  cnt_mid      r24
 DEF  cnt_high     r25
-CSEG start        00000003
-CSEG measure      00000006
-CSEG short_delay  00000028
-CSEG await_signal 0000000e
-CSEG indicate_activity 0000001b
-CSEG D16_nnn      00000037
-CSEG long_delay   0000002c
-CSEG DIV_ret      00000058
+CSEG initUART     00000003
+CSEG start        0000000c
+CSEG measure      0000000f
+CSEG short_delay  00000036
+CSEG await_signal 0000001e
+CSEG start_timer  00000021
+CSEG sensor_activity 00000032
+CSEG convert_to_cm 00000055
+CSEG transmit_distance 00000048
+CSEG long_delay_init 0000003a
+CSEG stop_timer   0000002a
+CSEG long_delay   0000003d
+CSEG transmit_distance_low 0000004e
+CSEG convert_ret  00000076
