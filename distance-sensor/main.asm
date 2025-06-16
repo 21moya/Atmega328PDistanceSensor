@@ -17,7 +17,6 @@
 .def cnt_high = r25
 
 cbi DDRD, sensor
-
 sbi DDRD, light
 cbi PORTD, light
 
@@ -45,6 +44,7 @@ measure:
 	sbi PORTD, light
 	rcall start_timer
 	rcall sensor_activity
+	rcall stop_timer
 	rcall convert_to_cm
 	rcall transmit_distance
 	rcall long_delay_init
@@ -67,7 +67,6 @@ start_timer:
 stop_timer:
 	ldi r26,0
 	sts TCCR1B, r26
-
 	lds r16, TCNT1L
 	lds r17, TCNT1H
 	ret
@@ -75,7 +74,6 @@ stop_timer:
 sensor_activity:
 	sbic PIND, sensor
 	rjmp sensor_activity
-	rcall stop_timer
 	ret
 
 short_delay:
