@@ -52,33 +52,25 @@ A delay prevents immediate re-triggering.
 ## ⚙️ Build and Flash
 You’ll need avr-gcc and avrdude:
 
-´
+`
 avr-gcc -mmcu=atmega328p -o main.elf main.asm
 avr-objcopy -O ihex main.elf main.hex
 avrdude -c usbasp -p m328p -U flash:w:main.hex
-´
+`
 
 ## 🖥️ UART Listener (Python)
 The Python script reads the 2-byte UART output and prints the distance in centimeters:
 
 ## Requirements
-bash
-Copy
-Edit
-pip install pyserial
+`pip install pyserial`
+
 Usage
-bash
-Copy
-Edit
-python uartListener.py
+`python uartListener.py`
 
 ##📐 Distance Conversion Logic
 Ticks (0.5µs each) are converted to distance using:
 
-nginx
-Copy
-Edit
-distance (cm) = ticks / 116
+`distance (cm) = ticks / 116`
 Since division is not natively supported, it’s done via:
 
 Fixed-point multiplication: ticks * (2^16 / 116)
