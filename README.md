@@ -101,4 +101,4 @@ Handles UART buffer availability before each transmission
 This project is provided for educational purposes. Feel free to adapt or improve!
 
 👤 Author
-Built by [Your Name] as a deep-dive into AVR Assembly, low-level timing, and sensor integration.
+Built by moya21 and Benedikt_Nau as a deep-dive into AVR Assembly, low-level timing, and sensor integration.
