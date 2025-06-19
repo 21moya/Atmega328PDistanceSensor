@@ -1,7 +1,7 @@
-📏 Distance Sensor Project (Assembly & UART Communication)
+# 📏 Distance Sensor Project (Assembly & UART Communication)
 This project implements a distance measurement system using an ultrasonic sensor, controlled by an AVR microcontroller (e.g., ATmega328P). The code is written entirely in Assembly language, with UART-based serial communication to a host computer. A Python script listens on the COM port and prints out measured distances in centimeters.
 
-🛠️ Features
+## 🛠️ Features
 Trigger and receive ultrasonic sensor pulses
 
 Measure time-of-flight using Timer1 (0.5µs resolution)
@@ -14,7 +14,7 @@ LED indicator while measuring
 
 Software UART listener (Python script)
 
-🔧 Hardware Requirements
+## 🔧 Hardware Requirements
 ATmega328P or compatible AVR microcontroller
 
 Ultrasonic distance sensor (e.g., HC-SR04)
@@ -32,7 +32,7 @@ PD2	Button Input
 PD3	Sensor I/O
 PD4	LED Output
 
-🚀 How It Works
+## 🚀 How It Works
 Button Press starts the measurement.
 
 The sensor is triggered with a short pulse.
@@ -49,19 +49,19 @@ An LED lights up during measurement.
 
 A delay prevents immediate re-triggering.
 
-⚙️ Build and Flash
+## ⚙️ Build and Flash
 You’ll need avr-gcc and avrdude:
 
-bash
-Copy
-Edit
+'
 avr-gcc -mmcu=atmega328p -o main.elf main.asm
 avr-objcopy -O ihex main.elf main.hex
 avrdude -c usbasp -p m328p -U flash:w:main.hex
-🖥️ UART Listener (Python)
+'
+
+## 🖥️ UART Listener (Python)
 The Python script reads the 2-byte UART output and prints the distance in centimeters:
 
-Requirements
+## Requirements
 bash
 Copy
 Edit
@@ -71,7 +71,8 @@ bash
 Copy
 Edit
 python uartListener.py
-📐 Distance Conversion Logic
+
+##📐 Distance Conversion Logic
 Ticks (0.5µs each) are converted to distance using:
 
 nginx
@@ -86,7 +87,7 @@ Post-scaling correction for rounding
 
 Fast and efficient in 8-bit AVR assembly
 
-🧠 Technical Highlights
+## 🧠 Technical Highlights
 Full UART initialization and transmission routines in ASM
 
 Timer1 used in CTC mode with pre-scaler
@@ -97,8 +98,8 @@ Optimized for speed and memory efficiency
 
 Handles UART buffer availability before each transmission
 
-📝 License
+## 📝 License
 This project is provided for educational purposes. Feel free to adapt or improve!
 
-👤 Author
+### 👤 Author
 Built by moya21 and Benedikt_Nau as a deep-dive into AVR Assembly, low-level timing, and sensor integration.
