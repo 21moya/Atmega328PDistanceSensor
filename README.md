@@ -49,15 +49,6 @@ An LED lights up during measurement.
 
 A delay prevents immediate re-triggering.
 
-## ⚙️ Build and Flash
-You’ll need avr-gcc and avrdude:
-
-`
-avr-gcc -mmcu=atmega328p -o main.elf main.asm
-avr-objcopy -O ihex main.elf main.hex
-avrdude -c usbasp -p m328p -U flash:w:main.hex
-`
-
 ## 🖥️ UART Listener (Python)
 The Python script reads the 2-byte UART output and prints the distance in centimeters:
 
