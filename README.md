@@ -93,5 +93,5 @@ Handles UART buffer availability before each transmission
 ## 📝 License
 This project is provided for educational purposes. Feel free to adapt or improve!
 
-### 👤 Author
-Built by 21moya and BenediktNau as a deep-dive into AVR Assembly, low-level timing, and sensor integration.
+## 👤 Author
+Built by [BenediktNau](https://github.com/BenediktNau) and [21moya](https://github.com/21moya) as a deep-dive into AVR Assembly, low-level timing, and sensor integration.
