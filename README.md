@@ -49,6 +49,56 @@ An LED lights up during measurement.
 
 A delay prevents immediate re-triggering.
 
+## ⚙️ Build & Flash
+
+### Requirements
+Install AVR tools:
+```sh
+# Debian/Ubuntu
+sudo apt install gcc-avr binutils-avr avr-libc avrdude
+# macOS (Homebrew)
+brew install avr-gcc avrdude
+```
+
+### Build
+```sh
+# Assemble + link (for .asm)
+avr-gcc -mmcu=atmega328p -DF_CPU=16000000UL -Os -nostdlib -x assembler-with-cpp -o main.elf main.asm
+avr-objcopy -O ihex -R .eeprom main.elf main.hex
+
+# Or, if renamed to main.S
+avr-gcc -mmcu=atmega328p -DF_CPU=16000000UL -Os -nostdlib -o main.elf main.S
+avr-objcopy -O ihex -R .eeprom main.elf main.hex
+```
+
+### Flash
+```sh
+avrdude -c usbasp -p m328p -U flash:w:main.hex:i
+```
+
+---
+
+### Minimal Makefile
+```makefile
+MCU = atmega328p
+F_CPU = 16000000UL
+PROG = usbasp
+SRC = main.asm
+ELF = main.elf
+HEX = main.hex
+
+all: $(HEX)
+$(ELF): $(SRC)
+	avr-gcc -mmcu=$(MCU) -DF_CPU=$(F_CPU) -Os -nostdlib -x assembler-with-cpp -o $@ $<
+$(HEX): $(ELF)
+	avr-objcopy -O ihex -R .eeprom $< $@
+flash: $(HEX)
+	avrdude -c $(PROG) -p m328p -U flash:w:$(HEX):i
+clean:
+	rm -f $(ELF) $(HEX)
+```
+
+
 ## 🖥️ UART Listener (Python)
 The Python script reads the 2-byte UART output and prints the distance in centimeters:
 
