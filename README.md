@@ -102,7 +102,7 @@ clean:
 ## 🖥️ UART Listener (Python)
 The Python script reads the 2-byte UART output and prints the distance in centimeters:
 
-## Requirements
+### Requirements
 `pip install pyserial`
 
 Usage
