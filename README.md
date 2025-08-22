@@ -108,7 +108,7 @@ The Python script reads the 2-byte UART output and prints the distance in centim
 Usage
 `python uartListener.py`
 
-##📐 Distance Conversion Logic
+## 📐 Distance Conversion Logic
 Ticks (0.5µs each) are converted to distance using:
 
 `distance (cm) = ticks / 116`
